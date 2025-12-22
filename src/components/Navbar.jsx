@@ -4,13 +4,21 @@ import { useWallet } from "../context/WalletContext";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
-  const { isConnected, connectWallet, walletAddress } = useWallet();
+  const { isConnected, connectWallet, walletAddress, isAuthenticated, logout } = useWallet();
   const navigate = useNavigate();
 
-  const handleConnect = () => {
-    connectWallet();
-    navigate("/marketplace"); // Auto-redirect after login
+  const truncateAddress = (addr) => {
+    if (!addr) return "Connected";
+    const raw = String(addr);
+    if (raw.includes("...")) return raw; // already short
+    if (raw.length <= 12) return raw;
+    return `${raw.slice(0,6)}...${raw.slice(-4)}`;
   };
+
+  const handleConnect = async () => {
+    const ok = await connectWallet();
+    if (ok) navigate("/marketplace"); // Auto-redirect on success
+  }; 
 
   return (
     <nav className="border-b border-brand-gray bg-brand-black p-4 sticky top-0 z-50">
@@ -43,13 +51,31 @@ export default function Navbar() {
             }`}
           >
             <Wallet size={18} />
-            {isConnected ? walletAddress : "Connect Wallet"}
+            {isConnected ? truncateAddress(walletAddress) : "Connect"}
           </button>
 
           {/* Profile Button (to the right of wallet button) */}
-          <Link to="/profile" className="px-3 py-2 rounded-lg bg-brand-gray text-white hover:bg-gray-700 flex items-center gap-2 transition">
-            <User size={18} /> Profile
+          {!isAuthenticated && (
+            <Link to="/register" className="px-3 py-2 rounded-lg bg-transparent text-brand-green hover:underline flex items-center gap-2 transition">
+              Register
+            </Link>
+          )}
+
+          <Link to={isAuthenticated ? "/profile" : "/login"} className="px-3 py-2 rounded-lg bg-brand-gray text-white hover:bg-gray-700 flex items-center gap-2 transition">
+            <User size={18} /> {isAuthenticated ? 'Profile' : 'Sign In'}
           </Link>
+
+          {isAuthenticated && (
+            <button
+              onClick={() => {
+                logout();
+                navigate("/");
+              }}
+              className="px-3 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 flex items-center gap-2 transition"
+            >
+              Logout
+            </button>
+          )}
         </div>
       </div>
     </nav>

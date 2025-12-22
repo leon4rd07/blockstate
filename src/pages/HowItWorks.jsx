@@ -34,7 +34,7 @@ export default function HowItWorks() {
             number="03"
             icon={<Coins size={32} />}
             title="Buy Fractional Tokens"
-            desc="Purchase tokens representing shares of the property. Minimum investment starts from IDR 50.000."
+            desc="Purchase tokens representing shares of the property. Minimum investment starts from IDR 10.000."
           />
           <StepCard
             number="04"

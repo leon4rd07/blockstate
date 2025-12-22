@@ -16,7 +16,7 @@ export default function Marketplace() {
         <div className="max-w-7xl mx-auto text-center">
           <h2 className="text-5xl font-bold mb-4">
             Own Real Estate from{" "}
-            <span className="text-brand-green">IDR 50.000</span>
+            <span className="text-brand-green">IDR 10.000</span>
           </h2>
           <p className="text-gray-400 text-xl max-w-2xl mx-auto">
             The world's first fractional real estate marketplace.

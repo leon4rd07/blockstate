@@ -12,7 +12,7 @@ import {
 import BackButton from "../components/BackButton";
 
 export default function Profile() {
-  const { walletAddress, holdings, properties } = useWallet();
+  const { walletAddress, holdings, properties, user } = useWallet();
   const [copied, setCopied] = useState(false);
 
   const truncate = (addr = "") => {
@@ -20,12 +20,16 @@ export default function Profile() {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
   };
 
+  // Use username initials if available, otherwise derive from wallet
   const initials = (addr = "") => {
+    if (user?.username) return String(user.username).slice(0, 2).toUpperCase();
     if (!addr) return "?";
     // Use first two non-0x chars
     const clean = addr.replace(/^0x/i, "");
     return clean.slice(0, 2).toUpperCase();
   };
+
+  const displayName = user?.username || 'Investor';
 
   // Email state (persisted locally)
   const [email, setEmail] = useState(() => localStorage.getItem("profile_email") || "");
@@ -75,15 +79,17 @@ export default function Profile() {
             </div>
 
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold">Investor</h2>
+              <h2 className="text-2xl md:text-3xl font-bold">{displayName}</h2>
               <div className="flex items-center gap-3 mt-1 text-gray-400">
                 <span className="font-mono">{truncate(walletAddress)}</span>
-                <button
-                  onClick={handleCopy}
-                  className="flex items-center gap-2 text-sm text-gray-300 bg-[#0b0b0b] px-2 py-1 rounded hover:bg-white/5 transition"
-                >
-                  <Copy size={14} /> {copied ? "Copied" : "Copy"}
-                </button>
+                {walletAddress && (
+                  <button
+                    onClick={handleCopy}
+                    className="flex items-center gap-2 text-sm text-gray-300 bg-[#0b0b0b] px-2 py-1 rounded hover:bg-white/5 transition"
+                  >
+                    <Copy size={14} /> {copied ? "Copied" : "Copy"}
+                  </button>
+                )}
               </div>
 
               <div className="mt-2">
@@ -163,6 +169,46 @@ export default function Profile() {
                 })}
               </ul>
             )}
+
+            {/* User's Listings */}
+            <div className="mt-8">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-bold">Your Listings</h3>
+                <div className="text-sm text-gray-400">{properties.filter((p) => String(p.ownerId) === String(user?.id)).length} entries</div>
+              </div>
+
+              {properties.filter((p) => String(p.ownerId) === String(user?.id)).length === 0 ? (
+                <div className="text-gray-400">You haven't listed any properties yet. Use "List Property" to add one.</div>
+              ) : (
+                <ul className="space-y-4">
+                  {properties.filter((p) => String(p.ownerId) === String(user?.id)).map((prop) => (
+                    <li key={prop.id} className="flex gap-4 items-center">
+                      <img src={prop?.image} alt={prop?.title} className="w-20 h-14 rounded-lg object-cover border border-white/10" />
+
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="font-bold">{prop?.title}</div>
+                            <div className="text-sm text-gray-400">{prop?.location}</div>
+                          </div>
+
+                          <div className="text-right">
+                            <div className="font-semibold text-brand-green">{prop.availableTokens} available</div>
+                            <div className="text-xs text-gray-400">{((prop.availableTokens / (prop.totalTokens || 1)) * 100).toFixed(0)}% available</div>
+
+                            <div className="mt-2">
+                              <button onClick={() => { /* no-op for now */ }} className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">
+                                Related Documents
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
 
           {/* Recent Activity / Actions */}

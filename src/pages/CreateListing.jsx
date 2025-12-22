@@ -4,7 +4,6 @@ import { useWallet } from "../context/WalletContext";
 import { useNavigate } from "react-router-dom";
 
 export default function CreateListing() {
-  const { addProperty } = useWallet();
   const navigate = useNavigate();
   const [form, setForm] = useState({
     title: "",
@@ -19,8 +18,15 @@ export default function CreateListing() {
   });
   const [error, setError] = useState("");
 
+  const { addProperty, isAuthenticated, user } = useWallet();
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!isAuthenticated) {
+      setError("You must be signed in to list a property.");
+      return navigate("/login");
+    }
 
     // Basic validation
     if (!form.image) {
@@ -45,6 +51,7 @@ export default function CreateListing() {
       availableTokens: parseInt(form.totalTokens) || 1000,
       maxPerPurchase: parseInt(form.maxPerPurchase) || 100,
       status: "Live",
+      createdBy: user?.username || user?.id || null,
     });
     alert("Property Listed Successfully!");
     navigate("/marketplace");

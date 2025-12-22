@@ -4,6 +4,7 @@ import { useWallet } from "../context/WalletContext";
 import Navbar from "../components/Navbar";
 import { ShieldCheck, TrendingUp, ExternalLink } from "lucide-react";
 import BackButton from "../components/BackButton";
+import ProposalList from "../components/ProposalList";
 
 export default function PropertyDetail() {
   const { id } = useParams();
@@ -175,6 +176,11 @@ export default function PropertyDetail() {
                   View Order Book & Market
                 </Link>
               </div>
+            </div>
+
+            {/* DAO Proposals (voting) */}
+            <div className="mt-6">
+              <ProposalList propertyId={property.id} ownerId={property.ownerId || property.createdBy || null} />
             </div>
           </div>
         </div>

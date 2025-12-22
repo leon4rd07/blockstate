@@ -26,9 +26,9 @@ export default function Landing() {
           </h1>
 
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Blockstate allows you to invest in premium real estate with as
-            little as
-            <span className="text-white font-bold"> IDR 50.000</span>. Powered
+            No more hesitation. 
+            Start investing with 
+            <span className="text-white font-bold"> BLOCKSTATE</span>.<br></br> Powered
             by blockchain, secured by law.
           </p>
 
