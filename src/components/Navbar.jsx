@@ -1,5 +1,5 @@
 import React from "react";
-import { LayoutGrid, Wallet, PlusCircle } from "lucide-react";
+import { LayoutGrid, Wallet, PlusCircle, User } from "lucide-react";
 import { useWallet } from "../context/WalletContext";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -45,6 +45,11 @@ export default function Navbar() {
             <Wallet size={18} />
             {isConnected ? walletAddress : "Connect Wallet"}
           </button>
+
+          {/* Profile Button (to the right of wallet button) */}
+          <Link to="/profile" className="px-3 py-2 rounded-lg bg-brand-gray text-white hover:bg-gray-700 flex items-center gap-2 transition">
+            <User size={18} /> Profile
+          </Link>
         </div>
       </div>
     </nav>

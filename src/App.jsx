@@ -7,6 +7,7 @@ import PropertyDetail from "./pages/PropertyDetail";
 import CreateListing from "./pages/CreateListing";
 import HowItWorks from "./pages/HowItWorks"; // Import
 import Trading from "./pages/Trading"; // Import
+import Profile from "./pages/Profile"; // Import Profile
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/create" element={<CreateListing />} />
           <Route path="/how-it-works" element={<HowItWorks />} />{" "}
           {/* Add Route */}
+          <Route path="/profile" element={<Profile />} />
           <Route path="/trading/:id" element={<Trading />} /> {/* Add Route */}
         </Routes>
       </BrowserRouter>

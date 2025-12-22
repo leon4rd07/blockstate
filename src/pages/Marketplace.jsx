@@ -72,6 +72,10 @@ export default function Marketplace() {
                         <MapPin size={14} className="mr-1" /> {prop.location}
                       </div>
 
+                      {prop.description && (
+                        <p className="text-sm text-gray-400 mb-4">{prop.description.length > 120 ? `${prop.description.slice(0,120)}...` : prop.description}</p>
+                      )}
+
                       <div className="grid grid-cols-2 gap-4 mb-4 p-3 bg-brand-gray/30 rounded-lg">
                         <div>
                           <p className="text-gray-500 text-xs">Projected APY</p>

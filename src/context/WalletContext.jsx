@@ -22,26 +22,68 @@ export function WalletProvider({ children }) {
 
   // Buy Logic
   const buyTokens = (propertyId, amount) => {
+    const prop = properties.find((p) => String(p.id) === String(propertyId));
     const currentAmount = holdings[propertyId] || 0;
 
-    if (currentAmount + amount > 100) {
+    // Basic validation
+    if (!prop) {
+      alert("Property not found.");
+      return false;
+    }
+
+    const maxHold = 100; // per-user hard limit
+    const maxPerPurchase = prop.maxPerPurchase ?? 100;
+
+    if (amount <= 0) {
+      alert("Enter a valid token amount.");
+      return false;
+    }
+
+    if (amount > maxPerPurchase) {
+      alert(`Purchase limit: You can only buy up to ${maxPerPurchase} tokens per transaction.`);
+      return false;
+    }
+
+    if (prop.availableTokens < amount) {
+      alert(`Not enough tokens available. Only ${prop.availableTokens} tokens remaining.`);
+      return false;
+    }
+
+    if (currentAmount + amount > maxHold) {
       alert(
         "Limit Reached! You can only hold 100 tokens. Use the Trading feature."
       );
       return false;
     }
 
+    // Deduct from available tokens
+    setProperties((prev) =>
+      prev.map((p) =>
+        p.id === prop.id
+          ? { ...p, availableTokens: Math.max(0, (p.availableTokens || 0) - amount) }
+          : p
+      )
+    );
+
     setHoldings((prev) => ({
       ...prev,
       [propertyId]: currentAmount + amount,
     }));
     return true;
-  };
+  }; 
 
   // Add Listing Logic
   const addProperty = (newProp) => {
-    setProperties([...properties, { ...newProp, id: Date.now() }]);
-  };
+    const normalized = {
+      ...newProp,
+      id: Date.now(),
+      totalTokens: newProp.totalTokens || 1000,
+      availableTokens: typeof newProp.availableTokens === "number" ? newProp.availableTokens : newProp.totalTokens || 1000,
+      maxPerPurchase: typeof newProp.maxPerPurchase === "number" ? newProp.maxPerPurchase : 100,
+      status: newProp.status || "Live",
+    };
+    setProperties([...properties, normalized]);
+  }; 
 
   const sellTokens = (propertyId, amount) => {
     const currentAmount = holdings[propertyId] || 0;
@@ -52,12 +94,21 @@ export function WalletProvider({ children }) {
       return false;
     }
 
+    // Increase available tokens back to the pool
+    setProperties((prev) =>
+      prev.map((p) =>
+        String(p.id) === String(propertyId)
+          ? { ...p, availableTokens: (p.availableTokens || 0) + amount }
+          : p
+      )
+    );
+
     setHoldings((prev) => ({
       ...prev,
       [propertyId]: currentAmount - amount,
     }));
     return true;
-  };
+  }; 
 
   return (
     <WalletContext.Provider
