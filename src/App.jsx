@@ -7,6 +7,9 @@ import PropertyDetail from "./pages/PropertyDetail";
 import CreateListing from "./pages/CreateListing";
 import HowItWorks from "./pages/HowItWorks"; // Import
 import Trading from "./pages/Trading"; // Import
+import Profile from "./pages/Profile"; // Import Profile
+import Login from "./pages/Login"; // Import Login
+import Register from "./pages/Register"; // Import Register
 
 function App() {
   return (
@@ -18,7 +21,9 @@ function App() {
           <Route path="/property/:id" element={<PropertyDetail />} />
           <Route path="/create" element={<CreateListing />} />
           <Route path="/how-it-works" element={<HowItWorks />} />{" "}
-          {/* Add Route */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/trading/:id" element={<Trading />} /> {/* Add Route */}
         </Routes>
       </BrowserRouter>

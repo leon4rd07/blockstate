@@ -12,6 +12,7 @@ export const properties = [
     availableTokens: 4500,
     totalTokens: 10000,
     status: "Live",
+    description: "A luxury villa in Seminyak with high occupancy and strong rental yield. Beautifully renovated, walking distance to the beach, dining and nightlife. Ideal for short-term rentals and holiday stays.",
   },
   {
     id: 2,
@@ -25,5 +26,6 @@ export const properties = [
     availableTokens: 1200,
     totalTokens: 5000,
     status: "Selling Fast",
+    description: "A modern residential cluster located in BSD City with easy access to transportation, schools and shopping. Robust long-term rental demand and consistent occupancy rates.",
   },
 ];

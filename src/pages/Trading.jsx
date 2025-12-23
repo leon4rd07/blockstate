@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useWallet } from "../context/WalletContext"; // Import Context
 import Navbar from "../components/Navbar";
-import { ArrowLeft, ArrowUp } from "lucide-react";
+import { ArrowUp } from "lucide-react";
+import BackButton from "../components/BackButton";
 
 export default function Trading() {
   const { id } = useParams();
@@ -68,12 +69,9 @@ export default function Trading() {
         {/* Header */}
         <div className="flex justify-between items-end mb-6 border-b border-brand-gray pb-6">
           <div>
-            <Link
-              to={`/property/${id}`}
-              className="flex items-center text-gray-400 mb-2 hover:text-white"
-            >
-              <ArrowLeft size={16} className="mr-2" /> Back to Asset Details
-            </Link>
+            <div className="mb-2">
+              <BackButton />
+            </div>
             <h1 className="text-3xl font-bold flex items-center gap-3">
               {property.title}{" "}
               <span className="text-sm bg-brand-gray px-2 py-1 rounded text-gray-300">

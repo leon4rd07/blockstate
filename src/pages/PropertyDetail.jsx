@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom"; // <--- ADDED Link HERE
 import { useWallet } from "../context/WalletContext";
 import Navbar from "../components/Navbar";
-import { ArrowLeft, ShieldCheck, TrendingUp, ExternalLink } from "lucide-react";
+import { ShieldCheck, TrendingUp, ExternalLink } from "lucide-react";
+import BackButton from "../components/BackButton";
+import ProposalList from "../components/ProposalList";
 
 export default function PropertyDetail() {
   const { id } = useParams();
@@ -49,12 +51,9 @@ export default function PropertyDetail() {
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Navigation Header */}
         <div className="flex justify-between items-center mb-6">
-          <button
-            onClick={() => navigate("/marketplace")}
-            className="flex items-center text-gray-400 hover:text-white transition"
-          >
-            <ArrowLeft size={16} className="mr-2" /> Back to Marketplace
-          </button>
+          <div>
+            <BackButton />
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-12">
@@ -94,7 +93,10 @@ export default function PropertyDetail() {
           {/* Right: Actions */}
           <div>
             <h1 className="text-4xl font-bold mb-2">{property.title}</h1>
-            <p className="text-gray-400 text-lg mb-6">{property.location}</p>
+            <p className="text-gray-400 text-lg mb-2">{property.location}</p>
+            {property.description && (
+              <p className="text-gray-300 mb-6">{property.description}</p>
+            )}
 
             <div className="grid grid-cols-2 gap-4 mb-8">
               <div className="bg-brand-gray/30 p-4 rounded-lg">
@@ -117,28 +119,41 @@ export default function PropertyDetail() {
               {!isMaxedOut ? (
                 <>
                   <h3 className="text-xl font-bold">Buy Tokens</h3>
+
+                  <div className="flex items-center gap-4 mb-3">
+                    <div className="text-sm text-gray-400">Available: <span className="text-white font-semibold">{property.availableTokens}</span></div>
+                    <div className="text-sm text-gray-400">Max per purchase: <span className="text-white font-semibold">{property.maxPerPurchase ?? 100}</span></div>
+                  </div>
+
                   <div className="flex gap-4">
                     <input
                       type="number"
-                      min="1"
-                      max={100 - userBalance}
+                      min={1}
+                      max={Math.min(property.maxPerPurchase ?? 100, 100 - userBalance, property.availableTokens || 0)}
                       value={amount}
-                      onChange={(e) => setAmount(e.target.value)}
+                      onChange={(e) => setAmount(Number(e.target.value))}
                       className="bg-brand-black border border-brand-gray rounded-lg px-4 py-3 w-full text-white focus:border-brand-green outline-none"
                     />
-                    <div className="flex items-center text-gray-400 whitespace-nowrap">
-                      tokens
-                    </div>
+                    <div className="flex items-center text-gray-400 whitespace-nowrap">tokens</div>
                   </div>
-                  <div className="flex justify-between text-sm text-gray-400">
+
+                  <div className="flex justify-between text-sm text-gray-400 mt-2">
                     <span>Total Cost:</span>
-                    <span className="text-white">
-                      Rp {(property.tokenPrice * amount).toLocaleString()}
-                    </span>
+                    <span className="text-white">Rp {(property.tokenPrice * (Number(amount) || 0)).toLocaleString()}</span>
                   </div>
+
                   <button
                     onClick={handleBuy}
-                    className="w-full bg-brand-green text-black font-bold py-4 rounded-xl hover:opacity-90 transition"
+                    disabled={
+                      !isConnected ||
+                      Number(amount) <= 0 ||
+                      Number(amount) > Math.min(property.maxPerPurchase ?? 100, 100 - userBalance, property.availableTokens || 0)
+                    }
+                    className={`w-full font-bold py-4 rounded-xl transition ${
+                      !isConnected
+                        ? "bg-gray-700 text-gray-300"
+                        : "bg-brand-green text-black hover:opacity-90"
+                    }`}
                   >
                     {isConnected ? "Confirm Purchase" : "Connect Wallet to Buy"}
                   </button>
@@ -146,12 +161,8 @@ export default function PropertyDetail() {
               ) : (
                 <div className="bg-brand-green/10 border border-brand-green/30 p-4 rounded-xl text-center">
                   <TrendingUp className="mx-auto text-brand-green mb-2" />
-                  <p className="text-white font-bold">
-                    Ownership Limit Reached
-                  </p>
-                  <p className="text-sm text-gray-400">
-                    You hold the maximum allowed tokens for this asset.
-                  </p>
+                  <p className="text-white font-bold">Ownership Limit Reached</p>
+                  <p className="text-sm text-gray-400">You hold the maximum allowed tokens for this asset.</p>
                 </div>
               )}
 
@@ -165,6 +176,11 @@ export default function PropertyDetail() {
                   View Order Book & Market
                 </Link>
               </div>
+            </div>
+
+            {/* DAO Proposals (voting) */}
+            <div className="mt-6">
+              <ProposalList propertyId={property.id} ownerId={property.ownerId || property.createdBy || null} />
             </div>
           </div>
         </div>

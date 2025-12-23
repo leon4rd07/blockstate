@@ -16,7 +16,7 @@ export default function Marketplace() {
         <div className="max-w-7xl mx-auto text-center">
           <h2 className="text-5xl font-bold mb-4">
             Own Real Estate from{" "}
-            <span className="text-brand-green">IDR 50.000</span>
+            <span className="text-brand-green">IDR 10.000</span>
           </h2>
           <p className="text-gray-400 text-xl max-w-2xl mx-auto">
             The world's first fractional real estate marketplace.
@@ -71,6 +71,10 @@ export default function Marketplace() {
                       <div className="flex items-center text-gray-400 text-sm mb-4">
                         <MapPin size={14} className="mr-1" /> {prop.location}
                       </div>
+
+                      {prop.description && (
+                        <p className="text-sm text-gray-400 mb-4">{prop.description.length > 120 ? `${prop.description.slice(0,120)}...` : prop.description}</p>
+                      )}
 
                       <div className="grid grid-cols-2 gap-4 mb-4 p-3 bg-brand-gray/30 rounded-lg">
                         <div>
